@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#05070f" />
+  <title>KAMAL AI — Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:#05070f; --surface:#0c1220; --card:#111827; --border:#1e293b;
+      --primary:#8b5cf6; --cyan:#22d3ee; --green:#10b981; --text:#f8fafc; --muted:#94a3b8;
+      --radius:16px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.55;-webkit-font-smoothing:antialiased}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 40% at 10% 0%,rgba(139,92,246,.12),transparent 50%),radial-gradient(ellipse 50% 30% at 90% 100%,rgba(34,211,238,.07),transparent 50%);pointer-events:none;z-index:0}
+
+    #gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+    .gate-box{width:92%;max-width:400px;background:var(--card);border:1px solid var(--border);border-radius:24px;padding:40px 28px;text-align:center;box-shadow:0 25px 50px -12px rgba(0,0,0,.5),0 0 50px rgba(139,92,246,.12);position:relative;z-index:1}
+    .gate-logo{font-size:2.4rem;font-weight:800;background:linear-gradient(135deg,#c4b5fd,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .gate-sub{color:var(--muted);margin:8px 0 24px;font-size:.93rem}
+    .gate-box input{width:100%;padding:14px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:1.05rem;text-align:center;outline:none;margin-bottom:12px}
+    .gate-box input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(139,92,246,.2)}
+    .gate-box button{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#8b5cf6,#6366f1);color:#fff;font-size:1.05rem;font-weight:700;cursor:pointer}
+    .gate-err{color:#ef4444;font-size:.88rem;margin-top:10px;display:none}
+
+    #app{display:none;position:relative;z-index:1}
+    header{position:sticky;top:0;z-index:50;background:rgba(5,7,15,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:10px 14px}
+    .hin{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:10px}
+    .bico{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#8b5cf6,#06b6d4);display:grid;place-items:center;font-weight:800;font-size:1.2rem;color:#fff}
+    .brand h1{font-size:1.25rem;font-weight:800;background:linear-gradient(90deg,#c4b5fd,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .brand span{font-size:.7rem;color:var(--muted);display:block}
+    .acts{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .badge{background:linear-gradient(90deg,#059669,#10b981);color:#fff;padding:3px 10px;border-radius:16px;font-size:.7rem;font-weight:700}
+    .lang{padding:5px 11px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:.8rem}
+    .lang.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+    .wrap{max-width:1200px;margin:0 auto;padding:16px 12px 60px}
+    .hero{text-align:center;margin-bottom:20px}
+    .hero h2{font-size:1.5rem;font-weight:800;margin-bottom:4px}
+    .hero p{color:var(--muted);font-size:.9rem}
+
+    .layout{display:grid;grid-template-columns:290px 1fr;gap:14px}
+    @media(max-width:860px){.layout{grid-template-columns:1fr}}
+    .side,.main{display:flex;flex-direction:column;gap:12px}
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+    .ch{font-size:.9rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+    .ch i{width:26px;height:26px;border-radius:7px;background:rgba(139,92,246,.15);display:grid;place-items:center;font-style:normal;font-size:.85rem}
+
+    .drop{border:2px dashed var(--border);border-radius:12px;padding:28px 10px;text-align:center;cursor:pointer;background:var(--surface);transition:.2s}
+    .drop:hover,.drop.over{border-color:var(--primary);background:rgba(139,92,246,.05)}
+    .drop .ico{font-size:2.2rem;margin-bottom:4px}
+    .drop img{max-width:100%;max-height:140px;border-radius:8px;margin-top:8px;display:none}
+
+    label{display:block;font-size:.78rem;color:var(--muted);margin:10px 0 4px}
+    select,textarea,input[type=text],input[type=password],input[type=range],input[type=number]{
+      width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);
+      background:var(--surface);color:var(--text);font-family:inherit;font-size:.9rem;outline:none
+    }
+    select:focus,textarea:focus,input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(139,92,246,.15)}
+    textarea{min-height:85px;resize:vertical}
+
+    .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+    .g2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+    .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+
+    .item{border:2px solid var(--border);border-radius:10px;padding:8px 3px;text-align:center;cursor:pointer;background:var(--surface);font-size:.7rem;transition:.2s}
+    .item:hover{border-color:#a78bfa}
+    .item.on{border-color:var(--cyan);background:rgba(34,211,238,.1)}
+    .item .e{font-size:1.25rem;display:block;margin-bottom:1px}
+
+    .vbtn{padding:10px;border-radius:10px;border:2px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-family:inherit;text-align:center;transition:.2s}
+    .vbtn.on{border-color:var(--cyan);background:rgba(34,211,238,.1)}
+
+    .modes{display:flex;gap:4px;background:var(--card);padding:4px;border-radius:12px;border:1px solid var(--border)}
+    .mode{flex:1;padding:10px 4px;border:none;border-radius:9px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:.82rem;font-weight:600}
+    .mode.on{background:var(--primary);color:#fff;box-shadow:0 3px 10px rgba(139,92,246,.3)}
+
+    .dur{display:flex;align-items:center;gap:8px}
+    .dur-v{background:linear-gradient(135deg,#8b5cf6,#6366f1);color:#fff;padding:3px 11px;border-radius:16px;font-size:.8rem;font-weight:600;white-space:nowrap}
+
+    .adv-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:4px 0}
+    .adv-toggle span{font-size:.9rem;font-weight:700}
+    .adv-body{display:none;margin-top:10px}
+    .adv-body.show{display:block}
+
+    .chip{display:inline-block;padding:6px 12px;border-radius:16px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;font-size:.78rem;margin:3px;transition:.2s;font-family:inherit}
+    .chip.on{background:rgba(139,92,246,.2);border-color:var(--primary);color:#c4b5fd}
+
+    .gen{width:100%;padding:15px;border:none;border-radius:13px;background:linear-gradient(135deg,#8b5cf6,#06b6d4);color:#fff;font-size:1.1rem;font-weight:800;cursor:pointer;transition:.2s;box-shadow:0 8px 24px -6px rgba(139,92,246,.4);display:flex;align-items:center;justify-content:center;gap:8px}
+    .gen:hover{transform:translateY(-2px)}
+    .gen:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+    .res{display:none;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center}
+    .bar{height:6px;background:var(--surface);border-radius:8px;overflow:hidden;margin:14px 0}
+    .bar-f{height:100%;width:0;background:linear-gradient(90deg,#8b5cf6,#22d3ee);border-radius:8px;transition:width .35s}
+    .st{color:var(--muted);font-size:.88rem}
+
+    .note{background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.2);border-radius:10px;padding:12px;margin-top:8px;font-size:.8rem;color:var(--muted)}
+    .note b{color:#c4b5fd}
+
+    footer{text-align:center;margin-top:32px;color:var(--muted);font-size:.75rem}
+  </style>
+</head>
+<body>
+<div id="gate">
+  <div class="gate-box">
+    <div class="gate-logo">KAMAL AI</div>
+    <div class="gate-sub">استوديو الفيديو الاحترافي<br>أدخل كلمة المرور</div>
+    <input type="password" id="pwd" placeholder="كلمة المرور" autocomplete="off"/>
+    <button onclick="go()">دخول</button>
+    <div class="gate-err" id="err">كلمة المرور غير صحيحة</div>
+  </div>
+</div>
+
+<div id="app">
+  <header>
+    <div class="hin">
+      <div class="brand">
+        <div class="bico">K</div>
+        <div><h1>KAMAL AI</h1><span>استوديو الفيديو الذكي Pro</span></div>
+      </div>
+      <div class="acts">
+        <span class="badge">مجاني</span>
+        <button class="lang on" id="lar" onclick="setL('ar')">عربي</button>
+        <button class="lang" id="ldz" onclick="setL('dz')">دارجة</button>
+        <button class="lang" id="len" onclick="setL('en')">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="hero">
+      <h2 id="ht">حوّل أفكارك إلى فيديوهات احترافية</h2>
+      <p id="hs">نص أو صورة ← فيديو سينمائي بجودة عالية</p>
+    </div>
+
+    <div class="layout">
+      <div class="side">
+        <div class="card">
+          <div class="ch"><i>📷</i> <span id="tu">رفع الصورة</span></div>
+          <div class="drop" id="dz" onclick="document.getElementById('fi').click()">
+            <div class="ico">☁️</div>
+            <div id="ut">اسحب أو اضغط</div>
+            <div style="font-size:.7rem;color:var(--muted);margin-top:2px">JPG · PNG · WEBP</div>
+            <img id="pv" alt="">
+          </div>
+          <input type="file" id="fi" accept="image/*" hidden onchange="onF(event)">
+        </div>
+
+        <div class="card">
+          <div class="ch"><i>👕</i> <span id="tc">اللباس</span></div>
+          <div class="g4" id="cl"></div>
+        </div>
+
+        <div class="card">
+          <div class="ch"><i>🎙️</i> <span id="tv">الصوت</span></div>
+          <label id="tg">الجنس</label>
+          <div class="g2">
+            <button class="vbtn on" id="vm" onclick="vo(this,'m')">ذكر</button>
+            <button class="vbtn" id="vf" onclick="vo(this,'f')">أنثى</button>
+          </div>
+          <label id="ta">العمر</label>
+          <select id="va">
+            <option value="c">طفل (5-12)</option>
+            <option value="t">مراهق (13-19)</option>
+            <option value="y" selected>شاب (20-35)</option>
+            <option value="a">بالغ (36-55)</option>
+            <option value="s">كبير (56+)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="main">
+        <div class="modes">
+          <button class="mode on" id="m1" onclick="md(this,'t')">نص → فيديو</button>
+          <button class="mode" id="m2" onclick="md(this,'i')">صورة → فيديو</button>
+          <button class="mode" id="m3" onclick="md(this,'e')">تمديد</button>
+        </div>
+
+        <div class="card">
+          <div class="ch"><i>✍️</i> <span id="tp">وصف الفيديو</span></div>
+          <textarea id="pr" placeholder="اكتب وصف الفيديو بالتفصيل..."></textarea>
+          <button class="chip" style="margin-top:8px" onclick="enhance()">✨ تحسين الوصف تلقائياً</button>
+        </div>
+
+        <div class="card">
+          <div class="ch"><i>📐</i> <span id="tf">الصيغة والمقاسات</span></div>
+          <label id="tas">نسبة العرض</label>
+          <div class="g3" id="as"></div>
+          <label id="tr">الدقة</label>
+          <select id="re">
+            <option value="480">480p</option>
+            <option value="720">720p HD</option>
+            <option value="1080" selected>1080p Full HD</option>
+          </select>
+          <label id="tfo">صيغة التصدير</label>
+          <select id="fo">
+            <option value="mp4" selected>MP4 (H.264)</option>
+            <option value="webm">WebM</option>
+            <option value="mov">MOV</option>
+            <option value="gif">GIF</option>
+          </select>
+          <label id="tb">مقاس الجسم</label>
+          <select id="bo"><option>XS</option><option>S</option><option selected>M</option><option>L</option><option>XL</option><option>XXL</option></select>
+        </div>
+
+        <div class="card">
+          <div class="ch"><i>⏱️</i> <span id="td">طول الفيديو</span></div>
+          <div class="dur">
+            <span class="dur-v" id="dv">5 ثوانٍ</span>
+            <input type="range" id="du" min="5" max="10" value="5" step="5" oninput="updD()" style="flex:1">
+          </div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:5px" id="dr">5 أو 10 ثوانٍ فقط (حد نموذج Wan 2.5)</div>
+        </div>
+
+        <!-- ADVANCED FEATURES -->
+        <div class="card">
+          <div class="adv-toggle" onclick="togAdv()">
+            <span>⚙️ ميزات متقدمة</span>
+            <span id="advArrow">▼</span>
+          </div>
+          <div class="adv-body" id="advBody">
+            <label>أسلوب الفيديو (Style)</label>
+            <div id="styles" style="margin-bottom:8px"></div>
+
+            <label>حركة الكاميرا (Camera)</label>
+            <div id="cams" style="margin-bottom:8px"></div>
+
+            <label>قوة الحركة (Motion Strength)</label>
+            <div class="dur">
+              <span class="dur-v" id="mv">50%</span>
+              <input type="range" id="mo" min="0" max="100" value="50" oninput="document.getElementById('mv').textContent=this.value+'%'" style="flex:1">
+            </div>
+
+            <label>الوصف السلبي (Negative Prompt)</label>
+            <textarea id="np" rows="2" placeholder="ما لا تريده في الفيديو... مثال: ضبابية، تشويه، أيدي إضافية"></textarea>
+
+            <label>Seed (للتكرار)</label>
+            <div style="display:flex;gap:8px">
+              <input type="number" id="seed" placeholder="عشوائي" style="flex:1">
+              <button class="chip" onclick="document.getElementById('seed').value=Math.floor(Math.random()*999999999)">🎲 عشوائي</button>
+            </div>
+
+            <label style="margin-top:10px">موسيقى خلفية</label>
+            <select id="music">
+              <option value="none">بدون موسيقى</option>
+              <option value="cinematic">سينمائي</option>
+              <option value="epic">ملحمي</option>
+              <option value="calm">هادئ</option>
+              <option value="upbeat">نشيط</option>
+              <option value="arabic">شرقي / عربي</option>
+              <option value="lofi">Lo-Fi</option>
+            </select>
+
+            <label>جودة الإخراج</label>
+            <select id="quality">
+              <option value="draft">مسودة (سريع)</option>
+              <option value="standard" selected>قياسي</option>
+              <option value="high">عالي</option>
+              <option value="ultra">فائق (أبطأ)</option>
+            </select>
+
+            <label>سرعة التوليد</label>
+            <select id="speed">
+              <option value="turbo">⚡ توربو (الأسرع - جودة أقل)</option>
+              <option value="fast" selected>🚀 سريع (متوازن)</option>
+              <option value="normal">🎬 عادي (جودة أفضل)</option>
+              <option value="quality">💎 جودة عالية (أبطأ)</option>
+            </select>
+
+            <div class="note" style="margin-top:10px">
+              <b>ملاحظة عن السرعة:</b><br>
+              • الفيديوهات القصيرة (10-30 ثانية) تولد أسرع<br>
+              • الدقة المنخفضة (720p) أسرع من 4K<br>
+              • وضع توربو يوفر الوقت على حساب بعض التفاصيل
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="ch"><i>🔑</i> مفتاح fal.ai</div>
+          <input type="password" id="ak" placeholder="الصق مفتاح fal.ai هنا..."/>
+          <div class="note"><b>مفتاح fal.ai مطلوب</b><br>الصق المفتاح هنا أو اضبط متغير البيئة FAL_KEY على السيرفر. بدون مفتاح لن يعمل التوليد.</div>
+        </div>
+
+        <button class="gen" id="gb" onclick="gen()">
+          <span>🚀</span> <span id="tg2">توليد الفيديو الآن</span>
+        </button>
+
+        <div class="res" id="rs">
+          <h3 id="tgen">جاري التوليد...</h3>
+          <div class="bar"><div class="bar-f" id="bf"></div></div>
+          <p class="st" id="st">تحضير...</p>
+          <div id="videoOut" style="display:none;margin-top:16px">
+            <video id="resultVideo" controls playsinline style="width:100%;max-height:560px;border-radius:12px;background:#000"></video>
+            <a id="downloadVideo" href="#" target="_blank" rel="noopener" download
+               style="display:block;margin-top:10px;padding:12px;border-radius:10px;background:linear-gradient(135deg,#10b981,#06b6d4);color:#fff;text-decoration:none;font-weight:700">⬇️ تحميل الفيديو</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer>KAMAL AI Pro © 2026 — مجاني 100%</footer>
+  </div>
+</div>
+
+<script>
+const PASS="DzVideo2026!";
+let L="ar", Mode="t", Gen="m";
+
+function go(){
+  if(document.getElementById("pwd").value===PASS){
+    document.getElementById("gate").style.display="none";
+    document.getElementById("app").style.display="block";
+    localStorage.setItem("ka","1");
+  } else document.getElementById("err").style.display="block";
+}
+if(localStorage.getItem("ka")==="1"){
+  document.getElementById("gate").style.display="none";
+  document.getElementById("app").style.display="block";
+}
+document.getElementById("pwd").onkeypress=e=>{if(e.key==="Enter")go()};
+
+const TR={
+  ar:{ht:"حوّل أفكارك إلى فيديوهات احترافية",hs:"نص أو صورة ← فيديو سينمائي",tu:"رفع الصورة",ut:"اسحب أو اضغط",tc:"اللباس",tv:"الصوت",tg:"الجنس",vm:"ذكر",vf:"أنثى",ta:"العمر",m1:"نص → فيديو",m2:"صورة → فيديو",m3:"تمديد",tp:"وصف الفيديو",ph:"اكتب وصف الفيديو بالتفصيل...",tf:"الصيغة والمقاسات",tas:"نسبة العرض",tr:"الدقة",tfo:"صيغة التصدير",tb:"مقاس الجسم",td:"طول الفيديو",dr:"من 10 ثوانٍ إلى 5 دقائق",tg2:"توليد الفيديو الآن",tgen:"جاري التوليد..."},
+  dz:{ht:"حوّل أفكارك لفيديوهات احترافية",hs:"نص ولا صورة ← فيديو سينمائي",tu:"حمّل الصورة",ut:"جرّ ولا اضغط",tc:"اللباس",tv:"الصوت",tg:"الجنس",vm:"راجل",vf:"مرة",ta:"العمر",m1:"نص → فيديو",m2:"صورة → فيديو",m3:"طوّل",tp:"اكتب شنو تبغي",ph:"اكتب هنا بالتفصيل...",tf:"الصيغة و المقاسات",tas:"نسبة العرض",tr:"الدقة",tfo:"صيغة التصدير",tb:"مقاس الجسم",td:"قداش يطول",dr:"من 10 ثواني حتى 5 دقايق",tg2:"ولّد الفيديو دوكا",tgen:"راه يتولد..."},
+  en:{ht:"Turn ideas into pro videos",hs:"Text or image → cinematic video",tu:"Upload Image",ut:"Drag or click",tc:"Clothing",tv:"Voice",tg:"Gender",vm:"Male",vf:"Female",ta:"Age",m1:"Text → Video",m2:"Image → Video",m3:"Extend",tp:"Video Prompt",ph:"Describe the video in detail...",tf:"Format & Sizes",tas:"Aspect Ratio",tr:"Resolution",tfo:"Export Format",tb:"Body Size",td:"Duration",dr:"From 10s to 5 minutes",tg2:"Generate Video Now",tgen:"Generating..."}
+};
+
+function setL(l){
+  L=l;
+  ["ar","dz","en"].forEach(x=>document.getElementById("l"+x).classList.toggle("on",x===l));
+  const t=TR[l];
+  Object.keys(t).forEach(k=>{const el=document.getElementById(k);if(el)el.textContent=t[k]});
+  document.getElementById("pr").placeholder=t.ph;
+  clothes();updD();
+}
+
+function md(b,m){document.querySelectorAll(".mode").forEach(x=>x.classList.remove("on"));b.classList.add("on");Mode=m}
+function vo(b,g){document.querySelectorAll(".vbtn").forEach(x=>x.classList.remove("on"));b.classList.add("on");Gen=g}
+
+const CL=[{e:"👕",ar:"كاجوال",dz:"عادي",en:"Casual"},{e:"👔",ar:"رسمي",dz:"رسمي",en:"Formal"},{e:"🧥",ar:"تقليدي",dz:"تقليدي",en:"Traditional"},{e:"🏃",ar:"رياضي",dz:"سبور",en:"Sport"},{e:"👗",ar:"أنيق",dz:"شيك",en:"Elegant"},{e:"🧣",ar:"شتوي",dz:"شتا",en:"Winter"},{e:"🩳",ar:"صيفي",dz:"صيف",en:"Summer"},{e:"🚫",ar:"بدون",dz:"بلا",en:"None"}];
+function clothes(){
+  document.getElementById("cl").innerHTML=CL.map((c,i)=>`<div class="item${i===0?" on":""}" onclick="this.parentNode.querySelectorAll('.item').forEach(x=>x.classList.remove('on'));this.classList.add('on')"><span class="e">${c.e}</span>${c[L]||c.ar}</div>`).join("");
+}
+
+const AS=[{e:"🖥️",l:"16:9"},{e:"📱",l:"9:16"},{e:"⬜",l:"1:1"},{e:"📺",l:"4:3"},{e:"🎬",l:"21:9"},{e:"📄",l:"3:4"}];
+document.getElementById("as").innerHTML=AS.map((a,i)=>`<div class="item${i===0?" on":""}" onclick="this.parentNode.querySelectorAll('.item').forEach(x=>x.classList.remove('on'));this.classList.add('on')"><span class="e">${a.e}</span>${a.l}</div>`).join("");
+
+/* Advanced styles & camera */
+const STYLES=[{id:"cinematic",ar:"سينمائي",dz:"سينمائي",en:"Cinematic"},{id:"realistic",ar:"واقعي",dz:"واقعي",en:"Realistic"},{id:"anime",ar:"أنمي",dz:"أنمي",en:"Anime"},{id:"3d",ar:"ثلاثي الأبعاد",dz:"3D",en:"3D"},{id:"noir",ar:"أسود وأبيض",dz:"نوار",en:"Noir"},{id:"vintage",ar:"كلاسيكي",dz:"قديم",en:"Vintage"},{id:"cyberpunk",ar:"سايبربانك",dz:"سايبر",en:"Cyberpunk"},{id:"fantasy",ar:"خيالي",dz:"خيالي",en:"Fantasy"}];
+const CAMS=[{id:"static",ar:"ثابتة",dz:"ثابتة",en:"Static"},{id:"pan",ar:"تحريك جانبي",dz:"تحريك",en:"Pan"},{id:"zoom",ar:"تكبير",dz:"زووم",en:"Zoom In"},{id:"zoomout",ar:"تصغير",dz:"زووم أوت",en:"Zoom Out"},{id:"orbit",ar:"دوران",dz:"دوران",en:"Orbit"},{id:"tracking",ar:"متابعة",dz:"متابعة",en:"Tracking"},{id:"drone",ar:"طائرة بدون طيار",dz:"درون",en:"Drone"},{id:"handheld",ar:"يدوي",dz:"يدوي",en:"Handheld"}];
+
+function renderAdv(){
+  document.getElementById("styles").innerHTML=STYLES.map((s,i)=>`<button class="chip${i===0?" on":""}" onclick="this.parentNode.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));this.classList.add('on')">${s[L]||s.ar}</button>`).join("");
+  document.getElementById("cams").innerHTML=CAMS.map((c,i)=>`<button class="chip${i===0?" on":""}" onclick="this.parentNode.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));this.classList.add('on')">${c[L]||c.ar}</button>`).join("");
+}
+
+function togAdv(){
+  const b=document.getElementById("advBody");
+  const a=document.getElementById("advArrow");
+  b.classList.toggle("show");
+  a.textContent=b.classList.contains("show")?"▲":"▼";
+}
+
+function enhance(){
+  const ta=document.getElementById("pr");
+  let p=ta.value.trim();
+  if(!p){p="رجل يمشي في شارع";}
+  const extras=["، إضاءة سينمائية ذهبية","، تفاصيل عالية الدقة","، حركة طبيعية سلسة","، عمق ميداني","، ألوان غنية"];
+  ta.value=p+extras[Math.floor(Math.random()*extras.length)]+extras[Math.floor(Math.random()*extras.length)];
+}
+
+function updD(){
+  const v=+document.getElementById("du").value;
+  const el=document.getElementById("dv");
+  if(L==="en") el.textContent = v + " sec";
+  else if(L==="dz") el.textContent = v + " ثواني";
+  else el.textContent = v + " ثوانٍ";
+}
+
+const dz=document.getElementById("dz");
+dz.ondragover=e=>{e.preventDefault();dz.classList.add("over")};
+dz.ondragleave=()=>dz.classList.remove("over");
+dz.ondrop=e=>{e.preventDefault();dz.classList.remove("over");if(e.dataTransfer.files[0])load(e.dataTransfer.files[0])};
+function onF(e){if(e.target.files[0])load(e.target.files[0])}
+let selectedImageFile=null;
+function load(f){
+  if(!f.type.startsWith("image/"))return;
+  selectedImageFile=f;
+  const r=new FileReader();
+  r.onload=ev=>{const img=document.getElementById("pv");img.src=ev.target.result;img.style.display="block";dz.querySelector(".ico").style.display="none";document.getElementById("ut").style.display="none"};
+  r.readAsDataURL(f);
+}
+
+function selectedText(containerId){
+  const el=document.querySelector(`#${containerId} .on`);
+  return el?el.textContent.trim():"";
+}
+
+function setProgress(n,msg){
+  document.getElementById("bf").style.width=Math.max(0,Math.min(100,n))+"%";
+  document.getElementById("st").textContent=msg;
+}
+
+async function gen(){
+  const btn=document.getElementById("gb"),res=document.getElementById("rs");
+  let prompt=document.getElementById("pr").value.trim();
+  const negative=document.getElementById("np").value.trim();
+  const seedVal=document.getElementById("seed").value.trim();
+  const duration=+document.getElementById("du").value === 10 ? 10 : 5;
+  const resVal=document.getElementById("re").value;
+  const resolution = resVal === "1080" ? "1080p" : (resVal === "480" ? "480p" : "720p");
+  const apiKey=document.getElementById("ak").value.trim();
+
+  if(!prompt){
+    alert(L==="dz"?"اكتب وصف الفيديو.":L==="en"?"Enter a video prompt.":"اكتب وصف الفيديو.");
+    return;
+  }
+  if(Mode==="i" && !selectedImageFile){
+    alert(L==="dz"?"حمّل صورة الأول.":L==="en"?"Upload an image first.":"ارفع صورة أولاً.");
+    return;
+  }
+
+  // Enrich prompt with advanced options
+  const style = selectedText("styles");
+  const cam = selectedText("cams");
+  const motion = document.getElementById("mo").value;
+  const clothing = selectedText("cl");
+  const extras = [];
+  if(style) extras.push(style + " style");
+  if(cam && cam !== "ثابتة" && cam !== "Static") extras.push(cam + " camera movement");
+  if(motion && +motion !== 50) extras.push("motion strength " + motion + "%");
+  if(clothing && clothing !== "بدون" && clothing !== "None" && clothing !== "بلا") extras.push("wearing " + clothing);
+  if(extras.length) prompt = prompt + ", " + extras.join(", ");
+
+  btn.disabled=true;
+  res.style.display="block";
+  document.getElementById("videoOut").style.display="none";
+  setProgress(5, L==="en"?"Starting...":"بدء التوليد...");
+
+  try{
+    const fd=new FormData();
+    fd.append("prompt", prompt);
+    fd.append("negative_prompt", negative || "low quality, blurry, distorted face, deformed hands, extra fingers, extra limbs, duplicate person, watermark, text");
+    fd.append("duration", String(duration));
+    fd.append("resolution", resolution);
+    fd.append("mode", Mode);
+    if(seedVal) fd.append("seed", seedVal);
+    if(apiKey) fd.append("api_key", apiKey);
+    if(selectedImageFile) fd.append("image", selectedImageFile, selectedImageFile.name);
+
+    setProgress(15, L==="en"?"Sending request...":"إرسال الطلب إلى الخادم...");
+    const response=await fetch("/api/generate",{method:"POST",body:fd});
+    const data=await response.json();
+    if(!response.ok) throw new Error(data.error || "فشل طلب التوليد");
+
+    setProgress(70, L==="en"?"Generating video (this may take 30-90s)...":"الفيديو قيد التوليد (قد يستغرق 30-90 ثانية)...");
+    const videoUrl=data.videoUrl;
+    if(!videoUrl) throw new Error("لم يرجع الخادم رابط الفيديو");
+
+    const video=document.getElementById("resultVideo");
+    video.src=videoUrl;
+    video.load();
+    document.getElementById("downloadVideo").href=videoUrl;
+    document.getElementById("videoOut").style.display="block";
+    setProgress(100, L==="en"?"Done! 🎉":"تم توليد الفيديو بنجاح 🎉");
+  }catch(err){
+    console.error(err);
+    setProgress(0, (L==="en"?"Failed: ":"فشل التوليد: ") + (err.message||err));
+  }finally{
+    btn.disabled=false;
+  }
+}
+
+clothes();renderAdv();updD();
+</script>
+</body>
+</html>
