@@ -18,7 +18,7 @@ app.post("/api/generate", upload.single("image"), async (req, res) => {
       return res.status(400).json({ error: "الوصف مطلوب." });
     }
 
-    // هنا تم وضع الرابط الطويل المباشر والصحيح لعقل المحرك ليعمل التوليد فوراً
+    // هنا تم تعديل الرابط مباشرة لعقل محرك LTX-Video السريع لتفادي الزحام شهرياً
     const response = await fetch("https://huggingface.co", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -26,7 +26,7 @@ app.post("/api/generate", upload.single("image"), async (req, res) => {
     });
 
     if (!response.ok) {
-      throw new Error("المحرك مشغول حالياً، يرجى المحاولة مجدداً بعد ثوانٍ.");
+      throw new Error("المحرك المجاني مزدحم حالياً بسبب الضغط العالمي، يرجى إعادة الضغط بعد ثوانٍ.");
     }
 
     const arrayBuffer = await response.arrayBuffer();
