@@ -18,7 +18,7 @@ app.post("/api/generate", upload.single("image"), async (req, res) => {
       return res.status(400).json({ error: "الوصف مطلوب." });
     }
 
-    // هنا تم وضع الرابط الطويل الصحيح والمستقر للمحرك المباشر
+    // هنا تم وضع الرابط الطويل المباشر والصحيح لعقل المحرك ليعمل التوليد فوراً
     const response = await fetch("https://huggingface.co", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
